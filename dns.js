@@ -38,7 +38,7 @@ exports.resolveNs = client.resolveNs;
 exports.resolveCname = client.resolveCname;
 exports.reverse = client.reverse;
 
-var consts = require('./lib/consts');
+var consts = require('native-dns-packet').consts;
 exports.BADNAME = consts.BADNAME;
 exports.BADRESP = consts.BADRESP;
 exports.CONNREFUSED = consts.CONNREFUSED;
@@ -64,6 +64,7 @@ var definedTypes = [
   'MX',
   'SRV',
   'SOA',
+  'TLSA',
 ].forEach(function (type) {
   exports[type] = function (opts) {
     var obj = {};
@@ -100,12 +101,3 @@ exports.Question = function (opts) {
   return q;
 };
 exports.Request = client.Request;
-
-exports.Cache = require('./lib/cache');
-exports.MemoryStore = require('./lib/memory').MemoryStore;
-
-var utils = require('./lib/utils');
-
-exports.Lookup = utils.Lookup
-exports.is_absolute = utils.is_absolute;
-exports.ensure_absolute = utils.ensure_absolute;

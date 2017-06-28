@@ -60,7 +60,7 @@ exports.setUp = function (cb) {
     if (fixed) {
       cb();
     } else {
-      process.nextTick(checkReady);
+      setImmediate(checkReady);
     }
   }
   checkReady();
@@ -251,7 +251,7 @@ exports.resolveTxt = function (test) {
   var req = dns.resolveTxt('google.com', function(err, records) {
     test.ifError(err);
     test.equal(records.length, 1);
-    test.equal(records[0].indexOf('v=spf1'), 0);
+    test.equal(records[0][0].indexOf('v=spf1'), 0);
     test.done();
   });
 
@@ -396,6 +396,15 @@ exports.lookup_longname = function (test) {
   checkWrap(test, request);
 };
 
+exports.lookup_without_nameservers = function(test) {
+  platform.name_servers = [];
+  dns.lookup('www.google.com', function(err) {
+    test.ok(err, 'we should fail');
+    test.strictEqual(err.errno, dns.TIMEOUT);
+    test.done();
+    fixupDns();
+  });
+};
 
 /* Disabled because it appears to be not working on linux. */
 /*

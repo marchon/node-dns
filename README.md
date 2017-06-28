@@ -1,19 +1,31 @@
+[![wercker status](https://app.wercker.com/status/ed5cab9035dfb9167714f305340490c2/s/master "wercker status")](https://app.wercker.com/project/byKey/ed5cab9035dfb9167714f305340490c2)
 [![Build Status](https://secure.travis-ci.org/tjfontaine/node-dns.png)](http://travis-ci.org/tjfontaine/node-dns)
 
 native-dns -- A replacement DNS stack for node.js
 =================================================
 
+# Maintenance
+
+This project is not actively maintained, it's left here for historical reasons,
+and when I (TJ) have time I come back to it.
+
+Feel free to fork and name the repo and npm package whatever you will.
+
+# (Below follows original README)
+
 Installation
 ------------
 
-`npm install native-dns` and then `var dns = require('native-dns');`
+```
+npm install native-dns
+```
 
 Client
 ------
 
 native-dns exports what should be a 1:1 mapping of the upstream node.js dns
 module. That is to say if it's listed in the [docs](http://nodejs.org/docs/latest/api/dns.html)
-it should behave similarly. If it doesn't please file an [issue](https://github.com/tjfontaine/node-dns/issues/new)
+it should behave similarly. If it doesn't please file an [issue](https://github.com/tjfontaine/node-dns/issues/new).
 
 Request
 -------
@@ -22,15 +34,15 @@ Beyond matching the upstream module, native-dns also provides a method for
 customizing queries.
 
 ```javascript
-var dns = require('../dns'),
-  util = require('util');
+var dns = require('native-dns');
+var util = require('util');
 
 var question = dns.Question({
   name: 'www.google.com',
   type: 'A',
 });
 
-var start = new Date().getTime();
+var start = Date.now();
 
 var req = dns.Request({
   question: question,
@@ -49,7 +61,7 @@ req.on('message', function (err, answer) {
 });
 
 req.on('end', function () {
-  var delta = (new Date().getTime()) - start;
+  var delta = (Date.now()) - start;
   console.log('Finished processing request: ' + delta.toString() + 'ms');
 });
 
@@ -128,8 +140,8 @@ Server
 There is also a rudimentary server implementation
 
 ```javascript
-var dns = require('../dns'),
-  server = dns.createServer();
+var dns = require('native-dns');
+var server = dns.createServer();
 
 server.on('request', function (request, response) {
   //console.log(request)
@@ -250,7 +262,7 @@ Available Types:
   - `priority` -- number
   - `exchange` -- string
  * `TXT`
-  - `data` -- string
+  - `data` -- array of strings
  * `SRV`
   - `priority` -- number
   - `weight` -- number
@@ -262,37 +274,10 @@ Available Types:
   - `data` -- string
  * `PTR`
   - `data` -- string
-
-Cache
------
-
-If you perform a query on an A or AAAA type and it doesn't exist, the cache
-will attempt to lookup a CNAME and then resolve that.
-
-The constructor takes an optional object with the following properties:
-
- * `store` -- implements the cache store model (optional, default MemoryStore)
-
-Methods:
-
- * `lookup(question, cb)` -- for a given question check the cache store for
-existence
- * `store(packet)` -- iterates over the resource records in a packet and sends
-them to the cache store
- * `purge()` -- clears the cache store of all entries
-
-MemoryStore / Cache store model
--------------------------------
-
-`MemoryStore(max, range)` -- Both max and range are optional, by default it
-will only store 10k keys, and upon reaching that delete `range` items from the
-store (default 50).
-
-Methods:
-
- * `get(name, type, cb)` -- check for values of the specified type
-  - if this would return an expired record it removes it
-  - `cb(results)` -- results should be an array of resource records, or falsey
-if not found in cache
- * `set(rr)` -- store the resource record, MemoryStore stores by `name` and
-`type` with an expiration on `ttl`
+ * `NAPTR`
+  - `order` -- number
+  - `preference` -- number
+  - `flags` -- string
+  - `service` -- string
+  - `regexp` -- string
+  - `replacement` -- string
